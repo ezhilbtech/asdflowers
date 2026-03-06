@@ -2,9 +2,12 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY . .
+COPY ASD_Flowers /app
 
 RUN apt-get update && apt-get install -y maven
+
+WORKDIR /app
+
 RUN mvn clean package -DskipTests
 
 EXPOSE 8080
