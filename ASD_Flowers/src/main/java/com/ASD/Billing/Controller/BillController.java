@@ -17,7 +17,7 @@ import com.ASD.Billing.Util.BillPdfService;
 
 @RestController
 @RequestMapping("/api/bills")
-@CrossOrigin(origins = "*")
+@CrossOrigin("https://asdflowers.netlify.app/")
 public class BillController {
 
     @Autowired BillService service;
