@@ -17,7 +17,7 @@ import com.ASD.Billing.Util.BillPdfService;
 
 @RestController
 @RequestMapping("/api/bills")
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin(origins = "*")
 public class BillController {
 
     @Autowired BillService service;
