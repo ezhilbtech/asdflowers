@@ -3,6 +3,7 @@ package com.ASD.Billing.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,5 +41,12 @@ public class BillController {
                         "attachment; filename="+bill.getBillNumber()+".pdf")
                 .header("Content-Type","application/pdf")
                 .body(pdf);
+    }
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllBills(){
+
+        service.deleteAll();
+
+        return ResponseEntity.ok("All Bills Deleted");
     }
 }
