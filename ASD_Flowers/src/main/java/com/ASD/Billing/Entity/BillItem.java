@@ -20,68 +20,36 @@ public class BillItem {
     private double rate;
     private double total;
 
-    private String date;   // ADD THIS
+    private String date;
+
+    private double borrow;   // NEW
 
     @ManyToOne
     private Bill bill;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getFlowerName() { return flowerName; }
+    public void setFlowerName(String flowerName) { this.flowerName = flowerName; }
 
-	public String getFlowerName() {
-		return flowerName;
-	}
+    public double getQuantity() { return quantity; }
+    public void setQuantity(double quantity) { this.quantity = quantity; }
 
-	public void setFlowerName(String flowerName) {
-		this.flowerName = flowerName;
-	}
+    public double getRate() { return rate; }
+    public void setRate(double rate) { this.rate = rate; }
 
-	public double getQuantity() {
-		return quantity;
-	}
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
 
-	public void setQuantity(double quantity) {
-		this.quantity = quantity;
-	}
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
-	public double getRate() {
-		return rate;
-	}
+    public double getBorrow() { return borrow; }
+    public void setBorrow(double borrow) { this.borrow = borrow; }
 
-	public void setRate(double rate) {
-		this.rate = rate;
-	}
-
-	public double getTotal() {
-		return total;
-	}
-
-	public void setTotal(double total) {
-		this.total = total;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public Bill getBill() {
-		return bill;
-	}
-
-	public void setBill(Bill bill) {
-		this.bill = bill;
-	}
-
-    // getters setters
+    public Bill getBill() { return bill; }
+    public void setBill(Bill bill) { this.bill = bill; }
     
     
 }
