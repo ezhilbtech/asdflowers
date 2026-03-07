@@ -18,90 +18,84 @@ import com.ASD.Billing.Repository.CustomerRepository;
 @Service
 public class BillService {
 
-    @Autowired
-    private BillRepository billRepository;
+@Autowired
+BillRepository billRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
+@Autowired
+CustomerRepository customerRepository;
 
-    public Bill saveBill(BillRequest request) {
+public Bill saveBill(BillRequest request){
 
-        // Save Customer
-        Customer customer = new Customer();
-        customer.setUserName(request.getUserName());
-        customer.setVillageName(request.getVillageName());
-        customer = customerRepository.save(customer);
+Customer customer=new Customer();
 
-        // Create Bill
-        Bill bill = new Bill();
+customer.setUserName(request.getUserName());
+customer.setVillageName(request.getVillageName());
 
-        // Auto Bill Number
-        long count = billRepository.count() + 1;
+customer=customerRepository.save(customer);
 
-        String billNumber =
-                "ASD-" +
-                Year.now().getValue() +
-                "-" +
-                String.format("%04d", count);
+Bill bill=new Bill();
 
-        bill.setBillNumber(billNumber);
+long count=billRepository.count()+1;
 
-        // Flower from frontend
-        bill.setFlowerName(request.getFlowerName());
+String billNumber="ASD-"+Year.now().getValue()+"-"+String.format("%04d",count);
 
-        bill.setBillDate(request.getBillDate());
+bill.setBillNumber(billNumber);
 
-        bill.setCustomer(customer);
+bill.setFlowerName(request.getFlowerName());
 
-        double grandTotal = 0;
+bill.setBillDate(request.getBillDate());
 
-        List<BillItem> items = new ArrayList<>();
+bill.setCustomer(customer);
 
-        for (BillItemDTO dto : request.getItems()) {
+double grandTotal=0;
+double borrowTotal=0;
 
-            BillItem item = new BillItem();
+List<BillItem> items=new ArrayList<>();
 
-            // row date
-            item.setDate(dto.getDate());
+for(BillItemDTO dto:request.getItems()){
 
-            item.setQuantity(dto.getQuantity());
-            item.setRate(dto.getRate());
+BillItem item=new BillItem();
 
-            double total =
-                    dto.getQuantity() *
-                    dto.getRate();
+item.setDate(dto.getDate());
+item.setQuantity(dto.getQuantity());
+item.setRate(dto.getRate());
 
-            item.setTotal(total);
+double total=dto.getQuantity()*dto.getRate();
 
-            grandTotal += total;
+item.setTotal(total);
 
-            item.setBill(bill);
+grandTotal+=total;
 
-            items.add(item);
-        }
+if(dto.getBorrow()>0){
+borrowTotal+=dto.getBorrow();
+}
 
-        bill.setItems(items);
+item.setBorrow(dto.getBorrow());
 
-        // Commission
-        double commission = grandTotal * 0.10;
+item.setBill(bill);
 
-        // Final Amount
-        double finalAmount =
-                grandTotal -
-                commission -
-                request.getAdvance();
+items.add(item);
+}
 
-        bill.setCommission(commission);
-        bill.setAdvance(request.getAdvance());
-        bill.setFinalAmount(finalAmount);
+bill.setItems(items);
 
-        return billRepository.save(bill);
-    }
+double commission=grandTotal*0.10;
 
-    public Bill getBillById(Long id) {
+double finalAmount=grandTotal-commission-borrowTotal;
 
-        return billRepository
-                .findById(id)
-                .orElseThrow();
-    }
+bill.setCommission(commission);
+bill.setFinalAmount(finalAmount);
+
+return billRepository.save(bill);
+
+}
+
+public Bill getBillById(Long id){
+return billRepository.findById(id).orElseThrow();
+}
+
+public void deleteAll(){
+billRepository.deleteAll();
+}
+
 }
