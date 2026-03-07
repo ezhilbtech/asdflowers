@@ -1,6 +1,8 @@
 package com.ASD.Billing.Util;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DecimalFormat;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -11,8 +13,11 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -20,126 +25,246 @@ import com.itextpdf.text.pdf.PdfWriter;
 @Component
 public class BillPdfService {
 
+    DecimalFormat df = new DecimalFormat("₹0");
+
     public byte[] generateBillPdf(Bill bill) {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
 
-            Document document = new Document(PageSize.A4);
-            PdfWriter.getInstance(document, out);
+            Rectangle pageSize = new Rectangle(420,595);
+            Document document = new Document(pageSize,25,25,25,25);
 
+            PdfWriter writer = PdfWriter.getInstance(document,out);
             document.open();
 
-            Font titleFont =
-                    FontFactory.getFont(FontFactory.HELVETICA_BOLD, 26, BaseColor.RED);
+            /* -------- BORDER -------- */
 
-            Font headerFont =
-                    FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            PdfContentByte canvas = writer.getDirectContent();
 
-            Font normalFont =
-                    FontFactory.getFont(FontFactory.HELVETICA, 11);
+            canvas.setColorStroke(BaseColor.RED);
+            canvas.setLineWidth(3);
+            canvas.rectangle(10,10,400,575);
+            canvas.stroke();
 
-            // Title
-            Paragraph title = new Paragraph("ASD FLOWERS", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
+            canvas.setLineWidth(1.5f);
+            canvas.rectangle(15,15,390,565);
+            canvas.stroke();
 
-            document.add(title);
+            /* -------- FONTS -------- */
 
-            document.add(new Paragraph("\n"));
+            Font redFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,11,BaseColor.RED);
+            Font blueFont = FontFactory.getFont(FontFactory.HELVETICA,10,BaseColor.BLUE);
+            Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.BLUE);
+            Font title = FontFactory.getFont(FontFactory.HELVETICA_BOLD,60,BaseColor.RED);
+            Font ownerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.RED);
 
-            // Shop Details
-            document.add(new Paragraph(
-                    "PHONE NO : 9047121773 , 9047121790", headerFont));
+            /* -------- MOBILE NUMBERS -------- */
 
-            document.add(new Paragraph(
-                    "ADDRESS : JOTHI FLOWER MARKET THIRUVANNAMALAI 606601", headerFont));
+            PdfPTable phoneTable = new PdfPTable(2);
+            phoneTable.setWidthPercentage(100);
 
-            document.add(new Paragraph(
-                    "CUSTOMER : " + bill.getCustomer().getUserName(), normalFont));
+            PdfPCell leftPhone = new PdfPCell(new Phrase("Cell : D.9047121790",bold));
+            PdfPCell rightPhone = new PdfPCell(new Phrase("Cell : S.7339198360\n          9047121773",bold));
 
-            document.add(new Paragraph(
-                    "VILLAGE : " + bill.getCustomer().getVillageName(), normalFont));
+            leftPhone.setBorder(Rectangle.NO_BORDER);
+            rightPhone.setBorder(Rectangle.NO_BORDER);
 
-            document.add(new Paragraph(
-                    "FLOWER : " + bill.getFlowerName(), normalFont));
+            leftPhone.setHorizontalAlignment(Element.ALIGN_LEFT);
+            rightPhone.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
-            document.add(new Paragraph("\n"));
+            phoneTable.addCell(leftPhone);
+            phoneTable.addCell(rightPhone);
 
-            // Table
-            PdfPTable table = new PdfPTable(4);
+            document.add(phoneTable);
+
+            /* -------- PILLAIYAR -------- */
+
+            Image pillaiyar =
+                    Image.getInstance(getClass().getClassLoader()
+                            .getResource("/Pillayar.png"));
+
+            pillaiyar.scaleAbsolute(25,25);
+            pillaiyar.setAlignment(Image.ALIGN_CENTER);
+
+            document.add(pillaiyar);
+
+            /* -------- TITLE -------- */
+
+            Paragraph murugan = new Paragraph("SRI MURUGAN THUNAI",bold);
+            murugan.setAlignment(Element.ALIGN_CENTER);
+            document.add(murugan);
+
+            /* -------- HEADER -------- */
+
+            PdfPTable header = new PdfPTable(3);
+            header.setWidthPercentage(100);
+            header.setWidths(new int[]{2,3,2});
+
+            Image annamalaiyar =
+                    Image.getInstance(getClass().getClassLoader()
+                            .getResource("/annamalaiyar.png"));
+
+            annamalaiyar.scaleAbsolute(70,70);
+
+            PdfPCell leftImg = new PdfPCell(annamalaiyar);
+            leftImg.setBorder(Rectangle.NO_BORDER);
+
+            PdfPCell asd = new PdfPCell(new Phrase("ASD",title));
+            asd.setBorder(Rectangle.NO_BORDER);
+            asd.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            Image muruganImg =
+                    Image.getInstance(getClass().getClassLoader()
+                            .getResource("/murugan.png"));
+
+            muruganImg.scaleAbsolute(85,85);
+
+            PdfPCell rightImg = new PdfPCell(muruganImg);
+            rightImg.setBorder(Rectangle.NO_BORDER);
+            rightImg.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+            header.addCell(leftImg);
+            header.addCell(asd);
+            header.addCell(rightImg);
+
+            document.add(header);
+
+            /* -------- ADDRESS -------- */
+
+            Paragraph address = new Paragraph(
+                    "183, Annamalaiyar Flower Market\nThiruvannamalai - 606601",
+                    bold);
+
+            address.setAlignment(Element.ALIGN_CENTER);
+            document.add(address);
+
+            document.add(new Paragraph(" "));
+
+            /* -------- OWNERS BOX (MOVED HERE) -------- */
+
+            PdfPTable ownerTable = new PdfPTable(1);
+            ownerTable.setWidthPercentage(65);
+            ownerTable.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell owner =
+                    new PdfPCell(new Phrase("Owners : M.Selvam , M.Dinakaran",ownerFont));
+
+            owner.setHorizontalAlignment(Element.ALIGN_CENTER);
+            owner.setBorderColor(BaseColor.RED);
+            owner.setBorderWidth(2);
+            owner.setPaddingTop(8);
+            owner.setPaddingBottom(8);
+
+            ownerTable.addCell(owner);
+
+            document.add(ownerTable);
+
+            document.add(new Paragraph(" "));
+
+            /* -------- CUSTOMER DETAILS -------- */
+
+            document.add(new Paragraph("Customer : "+bill.getCustomer().getUserName(),redFont));
+            document.add(new Paragraph("Village : "+bill.getCustomer().getVillageName(),redFont));
+            document.add(new Paragraph("Flower : "+bill.getFlowerName(),redFont));
+
+            document.add(new Paragraph(" "));
+
+            /* -------- ITEMS TABLE -------- */
+
+            PdfPTable table = new PdfPTable(6);
             table.setWidthPercentage(100);
+            table.setWidths(new int[]{1,2,2,2,2,2});
 
-            table.addCell(headerCell("DATE"));
-            table.addCell(headerCell("WEIGHT"));
-            table.addCell(headerCell("RATE"));
-            table.addCell(headerCell("TOTAL"));
+            table.addCell(headerCell("No"));
+            table.addCell(headerCell("Date"));
+            table.addCell(headerCell("Weight"));
+            table.addCell(headerCell("Rate"));
+            table.addCell(headerCell("Borrow"));
+            table.addCell(headerCell("Total"));
 
+            int i = 1;
             double grandTotal = 0;
+            double borrowTotal = 0;
 
-            for (BillItem item : bill.getItems()) {
+            List<BillItem> items = bill.getItems();
 
+            for(BillItem item : items){
+
+                table.addCell(bodyCell(String.valueOf(i++)));
                 table.addCell(bodyCell(item.getDate()));
                 table.addCell(bodyCell(String.valueOf(item.getQuantity())));
-                table.addCell(bodyCell(String.valueOf(item.getRate())));
-                table.addCell(bodyCell(String.valueOf(item.getTotal())));
+                table.addCell(bodyCell(df.format(item.getRate())));
+                table.addCell(bodyCell(df.format(item.getBorrow())));
+                table.addCell(bodyCell(df.format(item.getTotal())));
 
                 grandTotal += item.getTotal();
+                borrowTotal += item.getBorrow();
             }
 
             document.add(table);
 
-            document.add(new Paragraph("\n"));
+            document.add(new Paragraph(" "));
 
-            // Summary
-            PdfPTable summary = new PdfPTable(2);
-            summary.setWidthPercentage(50);
-            summary.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            /* -------- TOTAL TABLE -------- */
 
-            summary.addCell(headerCell("TOTAL"));
-            summary.addCell(bodyCell(String.valueOf(grandTotal)));
+            PdfPTable totalTable = new PdfPTable(2);
+            totalTable.setWidthPercentage(45);
+            totalTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
-            summary.addCell(headerCell("COMMISSION (10%)"));
-            summary.addCell(bodyCell(String.valueOf(bill.getCommission())));
+            totalTable.addCell(totalCell("TOTAL"));
+            totalTable.addCell(totalCell(df.format(grandTotal)));
 
-            summary.addCell(headerCell("ADVANCE"));
-            summary.addCell(bodyCell(String.valueOf(bill.getAdvance())));
+            totalTable.addCell(totalCell("COMMISSION"));
+            totalTable.addCell(totalCell(df.format(bill.getCommission())));
 
-            summary.addCell(headerCell("FINAL AMOUNT"));
-            summary.addCell(bodyCell(String.valueOf(bill.getFinalAmount())));
+            totalTable.addCell(totalCell("BORROW"));
+            totalTable.addCell(totalCell(df.format(borrowTotal)));
 
-            document.add(summary);
+            totalTable.addCell(totalCell("FINAL AMOUNT"));
+            totalTable.addCell(totalCell(df.format(bill.getFinalAmount())));
+
+            document.add(totalTable);
 
             document.close();
 
-        } catch (Exception e) {
-
+        } catch(Exception e){
             e.printStackTrace();
-
         }
 
         return out.toByteArray();
     }
 
-    private PdfPCell headerCell(String text) {
+    private PdfPCell headerCell(String text){
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10,BaseColor.RED);
 
-        PdfPCell cell = new PdfPCell(new Paragraph(text, font));
-
+        PdfPCell cell = new PdfPCell(new Phrase(text,font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        cell.setBorderColor(BaseColor.RED);
 
         return cell;
     }
 
-    private PdfPCell bodyCell(String text) {
+    private PdfPCell bodyCell(String text){
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 11);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA,10,BaseColor.BLUE);
 
-        PdfPCell cell = new PdfPCell(new Paragraph(text, font));
-
+        PdfPCell cell = new PdfPCell(new Phrase(text,font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBorderColor(BaseColor.RED);
+
+        return cell;
+    }
+
+    private PdfPCell totalCell(String text){
+
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,11,BaseColor.RED);
+
+        PdfPCell cell = new PdfPCell(new Phrase(text,font));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBorderColor(BaseColor.RED);
 
         return cell;
     }
