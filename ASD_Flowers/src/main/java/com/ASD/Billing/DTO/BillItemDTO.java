@@ -8,6 +8,7 @@ public class BillItemDTO {
     private String date;
     private double quantity;
     private double rate;
+    private double borrow;
 	public String getDate() {
 		return date;
 	}
@@ -26,7 +27,12 @@ public class BillItemDTO {
 	public void setRate(double rate) {
 		this.rate = rate;
 	}
+	public double getBorrow() {
+		return borrow;
+	}
+	public void setBorrow(double borrow) {
+		this.borrow = borrow;
+	}
     
     
-
 }
