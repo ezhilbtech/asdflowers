@@ -172,7 +172,7 @@ public class BillPdfService {
 
             PdfPTable table = new PdfPTable(6);
             table.setWidthPercentage(100);
-            table.setWidths(new int[]{1,2,2,2,2,2});
+            table.setWidths(new int[]{1,3,2,2,2,2});
 
             table.addCell(headerCell("No"));
             table.addCell(headerCell("Date"));
