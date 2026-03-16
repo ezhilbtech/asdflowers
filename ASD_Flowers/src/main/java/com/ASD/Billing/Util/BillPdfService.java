@@ -33,7 +33,7 @@ public class BillPdfService {
 
         try {
 
-            Rectangle pageSize = new Rectangle(420,595);
+            Rectangle pageSize = new Rectangle(400,800);
             Document document = new Document(pageSize,25,25,25,25);
 
             PdfWriter writer = PdfWriter.getInstance(document,out);
@@ -54,8 +54,8 @@ public class BillPdfService {
 
             /* -------- FONTS -------- */
 
-            Font redFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,11,BaseColor.RED);
-            Font blueFont = FontFactory.getFont(FontFactory.HELVETICA,10,BaseColor.BLUE);
+            Font redFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.RED);
+            Font blueFont = FontFactory.getFont(FontFactory.HELVETICA,12,BaseColor.BLUE);
             Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.BLUE);
             Font title = FontFactory.getFont(FontFactory.HELVETICA_BOLD,60,BaseColor.RED);
             Font ownerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.RED);
@@ -238,7 +238,7 @@ public class BillPdfService {
 
     private PdfPCell headerCell(String text){
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10,BaseColor.RED);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.RED);
 
         PdfPCell cell = new PdfPCell(new Phrase(text,font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -249,7 +249,7 @@ public class BillPdfService {
 
     private PdfPCell bodyCell(String text){
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA,10,BaseColor.BLUE);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA,12,BaseColor.BLUE);
 
         PdfPCell cell = new PdfPCell(new Phrase(text,font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -260,7 +260,7 @@ public class BillPdfService {
 
     private PdfPCell totalCell(String text){
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,11,BaseColor.RED);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,BaseColor.RED);
 
         PdfPCell cell = new PdfPCell(new Phrase(text,font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
