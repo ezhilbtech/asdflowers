@@ -62,9 +62,10 @@ item.setRate(dto.getRate());
 
 double total=dto.getQuantity()*dto.getRate();
 
-item.setTotal(Math.round(total));
+double roundedTotal=Math.round(total);
+item.setTotal(roundedTotal);
 
-grandTotal+=total;
+grandTotal+=roundedTotal;
 
 if(dto.getBorrow()>0){
 borrowTotal+=dto.getBorrow();
