@@ -60,7 +60,7 @@ item.setDate(dto.getDate());
 item.setQuantity(dto.getQuantity());
 item.setRate(dto.getRate());
 
-double total=dto.getQuantity()*dto.getRate();
+long total=dto.getQuantity()*dto.getRate();
 
 item.setTotal(total);
 
