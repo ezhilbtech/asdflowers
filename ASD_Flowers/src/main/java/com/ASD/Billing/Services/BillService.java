@@ -60,9 +60,9 @@ item.setDate(dto.getDate());
 item.setQuantity(dto.getQuantity());
 item.setRate(dto.getRate());
 
-long total=dto.getQuantity()*dto.getRate();
+double total=dto.getQuantity()*dto.getRate();
 
-item.setTotal(total);
+item.setTotal(Math.round(total));
 
 grandTotal+=total;
 
